@@ -8,18 +8,27 @@
     <meta name="apple-mobile-web-app-title" content="{{title}}">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   </head>
   <body>
     <div id="app"></div>
     <script>
         var cb = function() {
-            var l = null;
-            var h = null;
+            var css = ['//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css'];
             {{#cssFils}}
-                l = document.createElement('link'); l.rel = 'stylesheet'; l.href = '{{{.}}}';
-                h = document.getElementsByTagName('head')[0]; h.parentNode.insertBefore(l, h);
+            css.push('{{{.}}}');
             {{/cssFils}}
+            var h = document.getElementsByTagName('head')[0], l;
+            var local = window.location.protocol === 'file:';
+            css.forEach(function (f) {
+                l = document.createElement('link');
+                l.rel = 'stylesheet';
+                if (local && f.substr(0, 2) === '//') {
+                  l.href = 'http://' + f;
+                } else {
+                  l.href = f;
+                }
+                h.parentNode.insertBefore(l, h);
+            });
         };
         var raf = requestAnimationFrame || mozRequestAnimationFrame ||
                 webkitRequestAnimationFrame || msRequestAnimationFrame;
